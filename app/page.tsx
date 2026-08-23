@@ -56,12 +56,13 @@ export default function HomePage() {
           {products.map((product) => (
             <div key={product.file} className="text-center">
               <div className="relative w-full aspect-square bg-gray-50 rounded-lg overflow-hidden border border-gray-200">
-                <Image
-                  src={`/products/${product.file}`}
-                  alt={product.label}
-                  fill
-                  className="object-contain p-2"
-                />
+               <Image
+  src={`/products/${product.file}`}
+  alt={product.label}
+  fill
+  sizes="(max-width: 640px) 50vw, 33vw"
+  className="object-contain p-2"
+/>
               </div>
               <p className="mt-1 text-sm text-gray-500">{product.label}</p>
             </div>
