@@ -15,13 +15,13 @@ export function Navbar({ authButton }: { authButton: React.ReactNode }) {
 
         {/* Desktop links */}
         <div className="hidden md:flex items-center gap-6">
-          <Link href="/" className="text-gray-600 hover:text-black whitespace-nowrap">
+          <Link href="/" className="text-gray-600 hover:text-white whitespace-nowrap">
             Home
           </Link>
           <span className="text-gray-400 cursor-not-allowed whitespace-nowrap" title="Coming soon">
             Calculators
           </span>
-          <Link href="/who-we-are" className="text-gray-600 hover:text-black whitespace-nowrap">
+          <Link href="/who-we-are" className="text-gray-600 hover:text-white whitespace-nowrap">
             Who We Are
           </Link>
           {/* <Link

@@ -13,7 +13,7 @@ export async function AuthButton({ onNavigate }: { onNavigate?: () => void }) {
       >
         <button
           type="submit"
-          className="px-4 py-1.5 rounded-md border border-gray-300 text-sm hover:bg-gray-100 transition-colors w-full"
+          className="px-4 py-1.5 rounded-md border border-gray-300 text-sm hover:bg-gray-800 hover:text-white transition-colors w-full"
         >
           Sign out
         </button>
