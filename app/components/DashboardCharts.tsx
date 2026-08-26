@@ -4,7 +4,6 @@ import {
   Bar,
   BarChart,
   CartesianGrid,
-  Cell,
   Legend,
   ResponsiveContainer,
   Tooltip,
@@ -17,67 +16,83 @@ const TEAL = "#0d9488";
 const ORANGE = "#ea580c";
 const PURPLE = "#8b5cf6";
 
+// Shared tooltip styling — dark label, subtle border, no washed-out grey title.
+const tooltipProps = {
+  contentStyle: {
+    borderRadius: "8px",
+    border: "1px solid #d1d5db",
+    fontSize: "13px",
+  },
+  labelStyle: {
+    color: "#111827",
+    fontWeight: 600,
+    marginBottom: "4px",
+  },
+  cursor: { fill: "rgba(255, 255, 255, 0.16)" },
+};
+
 export function DashboardCharts({ articles }: { articles: ArticleRow[] }) {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 w-full">
-      {/* 1. Need to Make — the bottleneck view */}
       <ChartBox title="Need to Make by Article (pcs)">
-        <BarChart data={articles} margin={{ bottom: 60 }}>
+        <BarChart data={articles} margin={{ bottom: 70, right: 10 }}>
           <CartesianGrid strokeDasharray="3 3" vertical={false} />
           <XAxis
             dataKey="article"
             angle={-45}
             textAnchor="end"
             interval={0}
+            height={80}
             tick={{ fontSize: 11 }}
           />
           <YAxis tick={{ fontSize: 11 }} />
-          <Tooltip formatter={(v) => Number(v).toLocaleString()} />
+          <Tooltip formatter={(v) => Number(v).toLocaleString()} {...tooltipProps} />
           <Bar dataKey="needToMake" fill={TEAL} name="Need to Make" />
         </BarChart>
       </ChartBox>
 
-      {/* 2. Balance vs Ready Stock vs Need to Make */}
       <ChartBox title="Balance vs Ready Stock vs Need to Make">
-        <BarChart data={articles} margin={{ bottom: 60 }}>
+        <BarChart data={articles} margin={{ bottom: 90, right: 10 }}>
           <CartesianGrid strokeDasharray="3 3" vertical={false} />
           <XAxis
             dataKey="article"
             angle={-45}
             textAnchor="end"
             interval={0}
+            height={80}
             tick={{ fontSize: 11 }}
           />
           <YAxis tick={{ fontSize: 11 }} />
-          <Tooltip formatter={(v) => Number(v).toLocaleString()} />
-          <Legend wrapperStyle={{ fontSize: 12 }} />
+          <Tooltip formatter={(v) => Number(v).toLocaleString()} {...tooltipProps} />
+          <Legend
+            verticalAlign="bottom"
+            wrapperStyle={{ fontSize: 12, paddingTop: 20 }}
+          />
           <Bar dataKey="balance" fill={TEAL} name="Balance" />
           <Bar dataKey="readyStock" fill={ORANGE} name="Ready Stock" />
           <Bar dataKey="needToMake" fill={PURPLE} name="Need to Make" />
         </BarChart>
       </ChartBox>
 
-      {/* 3. Fabric share — horizontal, sorted, so the concentration is obvious */}
       <ChartBox title="Fabric Requirement by Article (+5%, yards)" wide>
         <BarChart
           data={[...articles].sort((a, b) => a.fabricRequired - b.fabricRequired)}
           layout="vertical"
-          margin={{ left: 20 }}
+          margin={{ left: 20, right: 20 }}
         >
           <CartesianGrid strokeDasharray="3 3" horizontal={false} />
           <XAxis type="number" tick={{ fontSize: 11 }} />
           <YAxis
             type="category"
             dataKey="article"
-            width={80}
+            width={85}
             tick={{ fontSize: 11 }}
           />
-          <Tooltip formatter={(v) => `${Number(v).toLocaleString()} yd`} />
-          <Bar dataKey="fabricRequired" fill={TEAL} name="Fabric (yd)">
-            {articles.map((row) => (
-              <Cell key={row.article} />
-            ))}
-          </Bar>
+          <Tooltip
+            formatter={(v) => `${Number(v).toLocaleString()} yd`}
+            {...tooltipProps}
+          />
+          <Bar dataKey="fabricRequired" fill={TEAL} name="Fabric (yd)" />
         </BarChart>
       </ChartBox>
     </div>
@@ -100,7 +115,7 @@ function ChartBox({
       }`}
     >
       <h3 className="text-sm font-semibold mb-4 text-center">{title}</h3>
-      <ResponsiveContainer width="100%" height={320}>
+      <ResponsiveContainer width="100%" height={380}>
         {children}
       </ResponsiveContainer>
     </div>
