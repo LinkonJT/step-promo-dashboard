@@ -45,7 +45,7 @@ const loadedAt = new Date().toLocaleString("en-GB", {
       </div>
 
       {/* Per-article table */}
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto w-full max-w-full">
         <table className="w-full text-sm border-collapse">
           <thead>
             <tr className="border-b border-gray-300 text-left">
