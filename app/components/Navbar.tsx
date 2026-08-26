@@ -63,7 +63,8 @@ export function Navbar({ authButton }: { authButton: React.ReactNode }) {
           >
             Login
           </Link> */}
-          <div onClick={() => setOpen(false)}>{authButton}</div>
+          {/* <div onClick={() => setOpen(false)}>{authButton}</div> */}
+          {authButton}
 
         </div>
       )}
