@@ -11,6 +11,13 @@ const stats = [
 ];
 
 export default function ToteBagPage() {
+
+const loadedAt = new Date().toLocaleString("en-GB", {
+    dateStyle: "medium",
+    timeStyle: "short",
+    timeZone: "Asia/Dhaka",
+  });
+
   return (
     <main className="px-6 py-10 max-w-6xl mx-auto flex flex-col gap-10">
       <div>
@@ -18,6 +25,7 @@ export default function ToteBagPage() {
         <p className="text-sm text-gray-500 mt-1">
           PO# IDBD02 / FO-315688A / FO-315701A
         </p>
+        <p className="text-xs text-gray-400 mt-2">Page loaded: {loadedAt}</p>
       </div>
 
       {/* Headline numbers */}
@@ -25,7 +33,7 @@ export default function ToteBagPage() {
         {stats.map((stat) => (
           <div
             key={stat.label}
-            className="border border-gray-200 rounded-lg p-4 text-center"
+            className="border border-gray-200 rounded-lg p-3 text-center aspect-square md:aspect-auto flex flex-col items-center justify-center"
           >
             <p className="text-xs text-gray-500">{stat.label}</p>
             <p className="text-xl font-bold mt-1">
