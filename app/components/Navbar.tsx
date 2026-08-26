@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 
-export function Navbar() {
+export function Navbar({ authButton }: { authButton: React.ReactNode }) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -24,12 +24,14 @@ export function Navbar() {
           <Link href="/who-we-are" className="text-gray-600 hover:text-black whitespace-nowrap">
             Who We Are
           </Link>
-          <Link
+          {/* <Link
             href="/login"
             className="px-4 py-1.5 rounded-md bg-black text-white text-sm hover:bg-gray-800"
           >
             Login
-          </Link>
+          </Link> */}
+
+          {authButton}
         </div>
 
         {/* Mobile hamburger */}
@@ -54,13 +56,15 @@ export function Navbar() {
           <Link href="/who-we-are" onClick={() => setOpen(false)} className="text-gray-600">
             Who We Are
           </Link>
-          <Link
+          {/* <Link
             href="/login"
             onClick={() => setOpen(false)}
             className="px-4 py-1.5 rounded-md bg-black text-white text-sm text-center"
           >
             Login
-          </Link>
+          </Link> */}
+          <div onClick={() => setOpen(false)}>{authButton}</div>
+
         </div>
       )}
     </nav>
