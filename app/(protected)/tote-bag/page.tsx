@@ -6,7 +6,7 @@ const stats = [
   { label: "Ready Stock in BD", value: headline.readyStock, unit: "pcs" },
   { label: "Need to Make", value: headline.needToMake, unit: "pcs" },
   { label: "Fabric Req. (+5%)", value: headline.fabricRequired, unit: "yards" },
-  { label: "Shippable Now", value: headline.shippableNow, unit: "pcs" },
+  { label: "Allocated to PO's", value: headline.shippableNow, unit: "pcs" },
   { label: "Surplus Stock", value: headline.surplusStock, unit: "pcs" },
 ];
 

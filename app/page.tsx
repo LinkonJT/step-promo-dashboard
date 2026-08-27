@@ -21,7 +21,7 @@ export default function HomePage() {
       {/* Page heading */}
       <div className="text-center">
         <h1 className="text-3xl font-bold">Step Promo Dashboard</h1>
-        <p className="mt-2 text-gray-600">
+        <p className="mt-2 text-gray-400">
           Live production numbers for Step Group operations
         </p>
       </div>
@@ -29,21 +29,21 @@ export default function HomePage() {
       {/* Two main navigation cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full max-w-3xl">
         <Link href="/tote-bag">
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+          <Card className="hover:shadow-lg bg-[#25C2AE] transition-shadow cursor-pointer">
             <Card.Header>
-              <Card.Title className="text-green-500 text-lg">Tote Bag</Card.Title>
-              <Card.Description>
-                Production, fabric, and shipment tracking
+              <Card.Title className="text-black text-lg">Tote Bag</Card.Title>
+              <Card.Description className="text-white">
+                Production data, fabric needs
               </Card.Description>
             </Card.Header>
           </Card>
         </Link>
 
         <Link href="/retail">
-          <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+          <Card className="hover:shadow-lg  bg-[#B00424] transition-shadow cursor-pointer">
             <Card.Header>
-              <Card.Title className="text-blue-500 text-lg">Retail</Card.Title>
-              <Card.Description>Retail sales dashboard</Card.Description>
+              <Card.Title className="text-black text-lg">Footwear Retail</Card.Title>
+              <Card.Description className="text-white">Retail sales dashboard</Card.Description>
             </Card.Header>
           </Card>
         </Link>
