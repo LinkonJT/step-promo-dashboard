@@ -22,9 +22,10 @@ const loadedAt = new Date().toLocaleString("en-GB", {
     <main className="px-6 py-10 max-w-6xl mx-auto flex flex-col gap-10">
       <div>
         <h1 className="text-2xl font-bold">Tote Bag Production</h1>
-        <p className="text-sm text-gray-500 mt-1">
+        <p className="text-sm text-gray-300 mt-1">
           PO# IDBD02 / FO-315688A / FO-315701A
         </p>
+           <p className="text-xs text-gray-300 mt-2">Table Updated Till: 26 Aug 2026</p>
         <p className="text-xs text-gray-400 mt-2">Page loaded: {loadedAt}</p>
       </div>
 
@@ -35,7 +36,7 @@ const loadedAt = new Date().toLocaleString("en-GB", {
             key={stat.label}
             className="border border-gray-200 rounded-lg p-3 text-center aspect-square md:aspect-auto flex flex-col items-center justify-center"
           >
-            <p className="text-xs text-gray-500">{stat.label}</p>
+            <p className="text-sm text-gray-200">{stat.label}</p>
             <p className="text-xl font-bold mt-1">
               {stat.value.toLocaleString()}
             </p>
