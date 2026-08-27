@@ -156,6 +156,9 @@ export default function ToteBagPage() {
         <p className="text-sm text-gray-300 mt-1">
           PO# IDBD02 / FO-315688A / FO-315701A
         </p>
+         <p className="text-sm text-gray-300 mt-1">
+          Updated Till: 26 Aug 2026
+        </p>
         <p className="text-xs text-gray-400 mt-2">Page loaded: {loadedAt}</p>
       </div>
 
