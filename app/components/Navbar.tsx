@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -7,32 +8,30 @@ export function Navbar({ authButton }: { authButton: React.ReactNode }) {
   const [open, setOpen] = useState(false);
 
   return (
-    <nav className="w-full border-b border-gray-200 px-4 sm:px-6 py-4">
+    <nav className="w-full border-b-2 border-brand px-4 sm:px-6 py-4">
       <div className="flex items-center justify-between">
-        <Link href="/" className="font-bold text-lg whitespace-nowrap">
-          Step Promo
-        </Link>
-
+  <Link href="/" className="flex items-center gap-2">
+  <Image
+    src="/step-logo.jpeg"
+    alt="Step"
+    width={50}
+    height={40}
+    className="object-contain rounded-2xl"
+  />
+  <span className="font-bold text-lg whitespace-nowrap mt-2">
+    Group Portal
+  </span>
+</Link>
         {/* Desktop links */}
-        <div className="hidden md:flex items-center gap-6">
-          <Link href="/" className="text-gray-600 hover:text-white whitespace-nowrap">
-            Home
-          </Link>
-          <span className="text-gray-400 cursor-not-allowed whitespace-nowrap" title="Coming soon">
-            Calculators
-          </span>
-          <Link href="/who-we-are" className="text-gray-600 hover:text-white whitespace-nowrap">
-            Who We Are
-          </Link>
-          {/* <Link
-            href="/login"
-            className="px-4 py-1.5 rounded-md bg-black text-white text-sm hover:bg-gray-800"
-          >
-            Login
-          </Link> */}
-
-          {authButton}
-        </div>
+ <div className="hidden md:flex items-center gap-6">
+  <Link href="/" className="text-muted hover:text-foreground transition-colors">
+    Home
+  </Link>
+  <Link href="/who-we-are" className="text-muted hover:text-foreground transition-colors whitespace-nowrap">
+    Who We Are
+  </Link>
+  {authButton}
+</div>
 
         {/* Mobile hamburger */}
         <button
