@@ -16,8 +16,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Step Promo Dashboard",
-  description: "Live production dashboard — Step Promo tote bag operations",
+  title: "Step Group Portal",
+  description: "Live updates for Step Group operations",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

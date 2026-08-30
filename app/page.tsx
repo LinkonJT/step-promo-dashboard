@@ -20,7 +20,8 @@ export default function HomePage() {
     <main className="flex flex-col items-center px-6 py-12 gap-16">
       {/* Page heading */}
       <div className="text-center">
-        <h1 className="text-3xl font-bold">Step Promo Dashboard</h1>
+        <h1 className="text-2xl font-bold"> Welcome To</h1>
+        <h2 className="text-3xl font-bold">Step Group Portal</h2>
         <p className="mt-2 text-gray-400">
           Live production numbers for Step Group operations
         </p>
