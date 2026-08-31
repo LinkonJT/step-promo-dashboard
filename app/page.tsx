@@ -23,7 +23,7 @@ export default function HomePage() {
         <h1 className="text-2xl font-bold"> Welcome To</h1>
         <h2 className="text-3xl font-bold">Step Group Portal</h2>
         <p className="mt-2 text-gray-400">
-          Live production numbers for Step Group operations
+          Live Updates for Step Group operations
         </p>
       </div>
 
