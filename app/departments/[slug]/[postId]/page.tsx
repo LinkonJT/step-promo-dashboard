@@ -70,19 +70,19 @@ export default async function PostDetailPage({ params }: PageProps) {
         ) : (
           <div className="space-y-3">
             {post.comments.map((comment) => (
-              <Card key={comment.id}>
-                <Card.Header>
-                  <div className="flex justify-between items-start w-full">
-                    <p className="text-sm font-medium text-black">{comment.author.name}</p>
-                    <span className="text-xs text-gray-400 whitespace-nowrap">
-                      {comment.createdAt.toLocaleDateString()}
-                    </span>
-                  </div>
-                  <Card.Description className="text-gray-700 mt-1">
-                    {comment.text}
-                  </Card.Description>
-                </Card.Header>
-              </Card>
+              <Card key={comment.id} className="bg-[#1a1a1a] border border-gray-800">
+  <Card.Header>
+    <div className="flex justify-between items-start w-full gap-4">
+      <p className="text-sm font-medium text-gray-100">{comment.author.name}</p>
+      <span className="text-xs text-gray-500 whitespace-nowrap">
+        {formatDateTime(comment.createdAt)}
+      </span>
+    </div>
+    <Card.Description className="text-gray-300 mt-1">
+      {comment.text}
+    </Card.Description>
+  </Card.Header>
+</Card>
             ))}
           </div>
         )}

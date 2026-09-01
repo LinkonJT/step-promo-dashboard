@@ -71,7 +71,9 @@ export function CreateTopicModal({
                 </Modal.Body>
                 <Modal.Footer>
                   <Button
+                  
                     variant="outline"
+                    className="text-gray-300 hover:text-gray-50"
                     isDisabled={isPending}
                     onPress={() => {
                       reset();

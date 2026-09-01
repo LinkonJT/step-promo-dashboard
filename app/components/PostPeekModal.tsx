@@ -21,21 +21,21 @@ export function PostPeekModal({ post, departmentSlug }: PostPeekModalProps) {
   return (
     <Modal>
       <Modal.Trigger>
-        <Card className="hover:shadow-lg transition-shadow cursor-pointer text-left w-full">
-          <Card.Header>
-            <div className="flex justify-between items-start w-full">
-              <Card.Title className="text-black text-base">{post.topic}</Card.Title>
-              <span className="text-xs text-gray-400 whitespace-nowrap">
-                {post.createdAt.toLocaleDateString()}
-              </span>
-            </div>
-            <Card.Description className="text-gray-600 line-clamp-2">
-              {post.details}
-            </Card.Description>
-            <p className="text-xs text-gray-400 mt-1">— {post.author.name}</p>
-          </Card.Header>
-        </Card>
-      </Modal.Trigger>
+  <Card className="bg-[#1a1a1a] border border-gray-800 hover:border-[#B31419] transition cursor-pointer text-left w-full">
+    <Card.Header>
+      <div className="flex justify-between items-start w-full gap-4">
+        <Card.Title className="text-gray-100 text-base">{post.topic}</Card.Title>
+        <span className="text-xs text-gray-500 whitespace-nowrap">
+          {formatDateTime(post.createdAt)}
+        </span>
+      </div>
+      <Card.Description className="text-gray-400 line-clamp-2">
+        {post.details}
+      </Card.Description>
+      <p className="text-xs text-gray-500 mt-1">— {post.author.name}</p>
+    </Card.Header>
+  </Card>
+</Modal.Trigger>
       <Modal.Backdrop>
         <Modal.Container>
           <Modal.Dialog className="bg-[#1a1a1a] text-gray-100">
@@ -52,7 +52,8 @@ export function PostPeekModal({ post, departmentSlug }: PostPeekModalProps) {
   <p className="text-gray-200 whitespace-pre-wrap">{post.details}</p>
 </Modal.Body>
                 <Modal.Footer>
-                  <Button variant="outline" onPress={close}>
+                  <Button variant="outline"
+                    className="text-gray-300 hover:text-gray-50" onPress={close}>
                     Close
                   </Button>
                   <Button
