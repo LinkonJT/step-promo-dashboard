@@ -4,6 +4,7 @@ import "./globals.css";
 import { Providers } from "./providers";
 import { Navbar } from "./components/Navbar";
 import { AuthButton } from "./components/AuthButton";
+import { ScrollToTop } from "./components/ScrollToTop";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,6 +29,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="min-h-full flex flex-col" >
         <Providers>
+           <ScrollToTop></ScrollToTop>
           <Navbar  authButton={<AuthButton />}></Navbar>
           {children}
           </Providers>
