@@ -8,7 +8,7 @@ export function Navbar({ authButton }: { authButton: React.ReactNode }) {
   const [open, setOpen] = useState(false);
 
   return (
-    <nav className="w-full border-b-2 border-brand px-4 sm:px-6 py-4">
+    <nav className="w-full sticky top-0 z-50 bg-black border-b-2 border-brand px-4 sm:px-6 py-4">
       <div className="flex items-center justify-between">
   <Link href="/" className="flex items-center gap-2">
   <Image

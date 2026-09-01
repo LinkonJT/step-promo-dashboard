@@ -17,7 +17,7 @@ export function ProductPhotoGrid() {
   return (
     <div className="w-full">
       <h2 className="text-xl font-semibold mb-4 text-center">Products</h2>
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
         {products.map((product) => (
           <div key={product.file} className="text-center">
             <div className="relative w-full aspect-square bg-gray-50 rounded-lg overflow-hidden border border-gray-200">

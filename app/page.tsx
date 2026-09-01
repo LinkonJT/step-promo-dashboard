@@ -15,7 +15,7 @@ export default async function HomePage() {
   });
 
   return (
-    <main className="flex flex-col items-center px-6 py-12 gap-12 max-w-5xl mx-auto">
+    <main className="flex flex-col px-6 py-12 gap-12 w-full max-w-7xl mx-auto">
       {/* Heading */}
       <div className="text-center">
         <h1 className="text-2xl font-bold">Welcome To</h1>
@@ -33,26 +33,31 @@ export default async function HomePage() {
         />
       </div>
 
-      {/* Department cards */}
-      <div className="w-full">
-        <h2 className="text-lg font-semibold mb-4">Departments</h2>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-          {departments.map((dept) => (
-            <Link key={dept.id} href={`/departments/${dept.slug}`}>
-              <div className="h-full p-4 rounded-lg bg-gray-50 border border-gray-200 border-l-4 border-l-[#B31419] hover:bg-gray-100 transition cursor-pointer">
-                <p className="font-medium">{dept.name}</p>
-                {dept.description && (
-                  <p className="text-sm text-gray-500 mt-1">{dept.description}</p>
-                )}
-              </div>
-            </Link>
-          ))}
-        </div>
-      </div>
+    
+     {/* Department cards */}
+<div className="w-full">
+  <h2 className="text-lg font-semibold mb-4 text-[#db2127] mx-auto">Departments</h2>
+  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+    {departments.map((dept) => (
+      <Link key={dept.id} href={`/departments/${dept.slug}`}>
+        <Card className="hover:shadow-lg transition-shadow cursor-pointer border-l-4 border-l-[#B31419] h-full">
+          <Card.Header>
+            <Card.Title className="text-grey-800 text-base">{dept.name}</Card.Title>
+            {dept.description && (
+              <Card.Description className="text-gray-600">
+                {dept.description}
+              </Card.Description>
+            )}
+          </Card.Header>
+        </Card>
+      </Link>
+    ))}
+  </div>
+</div>
 
       {/* Recent updates — last 10 posts across all departments */}
       <div className="w-full">
-        <h2 className="text-lg font-semibold mb-4">Recent Updates</h2>
+        <h2 className="text-lg font-semibold mb-4 text-[#db2127] ">Recent Updates</h2>
         {recentPosts.length === 0 ? (
           <div className="text-center py-12 text-gray-400 border border-gray-200 rounded-lg">
             No updates yet.
