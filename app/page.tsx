@@ -15,15 +15,15 @@ export default async function HomePage() {
   });
 
   return (
-    <main className="flex flex-col px-6 py-12 gap-12 w-full max-w-7xl mx-auto">
+    <main className="flex flex-col md:px-2 sm:px-4 py-10 gap-12 w-full max-w-7xl mx-auto">
       {/* Heading */}
       <div className="text-center">
-        <h1 className="text-2xl font-bold">Welcome To</h1>
+        <h1 className="text-2xl font-bold text-[#B31419]">Welcome To</h1>
         <h2 className="text-3xl font-bold">Step Group Portal</h2>
       </div>
 
       {/* Banner */}
-      <div className="relative w-full aspect-[21/9] rounded-lg overflow-hidden border border-gray-200">
+      <div className="relative w-full aspect-21/9 rounded-lg overflow-hidden border border-gray-200">
         <Image
           src="/banner.jpg"
           alt="Step Group"
@@ -37,10 +37,10 @@ export default async function HomePage() {
      {/* Department cards */}
 <div className="w-full">
   <h2 className="text-lg font-semibold mb-4 text-[#db2127] mx-auto">Departments</h2>
-  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-5">
     {departments.map((dept) => (
       <Link key={dept.id} href={`/departments/${dept.slug}`}>
-        <Card className="hover:shadow-lg transition-shadow cursor-pointer border-l-4 border-l-[#B31419] h-full">
+        <Card className="hover:shadow-lg transition-shadow cursor-pointer  border-t-[#B31419] border-t-1  border-l-4 border-l-[#B31419] h-full">
           <Card.Header>
             <Card.Title className="text-grey-800 text-base">{dept.name}</Card.Title>
             {dept.description && (

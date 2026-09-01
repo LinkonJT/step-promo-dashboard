@@ -26,7 +26,7 @@ export default async function DepartmentPage({ params }: PageProps) {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+    <div className="max-w-7xl w-full mx-auto px-4 sm:px-6 py-8">
       {/* Department header */}
       <div className="border-l-4 border-[#B31419] pl-4 mb-6">
         <h1 className="text-2xl font-bold">{department.name}</h1>
