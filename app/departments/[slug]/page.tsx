@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { ProductPhotoGrid } from "../../components/ProductPhotoGrid";
 import { CreateTopicModal } from "../../components/CreateTopicModal";
 import { PostPeekModal } from "../../components/PostPeekModal";
+import { EditPostModal } from "../../components/EditPostModal";
 import { Card } from "@heroui/react";
 import Link from "next/link";
 
@@ -18,6 +19,7 @@ export default async function DepartmentPage({ params }: PageProps) {
     where: { slug },
     include: {
       posts: {
+        where: { deletedAt: null },
         orderBy: { createdAt: "desc" },
         include: { author: true },
       },
@@ -30,6 +32,7 @@ export default async function DepartmentPage({ params }: PageProps) {
 
   const session = await auth();
   const authorName = session?.user?.name ?? session?.user?.email ?? "Unknown";
+  const currentUserEmail = session?.user?.email ?? null;
 
   return (
     <div className="max-w-7xl w-full mx-auto px-4 sm:px-6 py-8">
@@ -70,7 +73,14 @@ export default async function DepartmentPage({ params }: PageProps) {
       ) : (
         <div className="space-y-3">
           {department.posts.map((post) => (
-            <PostPeekModal key={post.id} post={post} departmentSlug={slug} />
+            <div key={post.id} className="relative">
+              <PostPeekModal post={post} departmentSlug={slug} />
+              {currentUserEmail === post.author.email && (
+                <div className="absolute top-3 right-3 z-10">
+                  <EditPostModal post={post} />
+                </div>
+              )}
+            </div>
           ))}
         </div>
       )}

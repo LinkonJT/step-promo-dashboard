@@ -9,11 +9,12 @@ export default async function HomePage() {
     orderBy: { order: "asc" },
   });
 
-  const recentPosts = await prisma.post.findMany({
-    take: 10,
-    orderBy: { createdAt: "desc" },
-    include: { author: true, department: true },
-  });
+ const recentPosts = await prisma.post.findMany({
+  where: { deletedAt: null },
+  take: 10,
+  orderBy: { createdAt: "desc" },
+  include: { author: true, department: true },
+});
 
   return (
     <main className="flex flex-col md:px-2 sm:px-4 py-10 gap-12 w-full max-w-7xl mx-auto">

@@ -3,40 +3,29 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Modal, Button, TextField, Label, Input, TextArea } from "@heroui/react";
-import { createPost } from "../actions/posts";
-import { formatDateTime } from "../lib/formatDate";
+import { updatePost } from "../actions/posts";
 
-export function CreateTopicModal({
-  departmentId,
-  authorName,
+export function EditPostModal({
+  post,
 }: {
-  departmentId: string;
-  authorName: string;
+  post: { id: string; topic: string; details: string };
 }) {
-  const [topic, setTopic] = useState("");
-  const [details, setDetails] = useState("");
+  const [topic, setTopic] = useState(post.topic);
+  const [details, setDetails] = useState(post.details);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
-//   const today = new Date().toLocaleDateString("en-GB", {
-//     day: "2-digit",
-//     month: "short",
-//     year: "numeric",
-//   });
-
-const today = formatDateTime(new Date());
-
-  function reset() {
-    setTopic("");
-    setDetails("");
-    setError(null);
-  }
-
   return (
     <Modal>
       <Modal.Trigger>
-        <Button variant="danger">+ Create Topic</Button>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="text-xs text-gray-400 hover:text-[#B31419] bg-[#1a1a1a] hover:bg-[#1a1a1a] px-2"
+        >
+          Edit
+        </Button>
       </Modal.Trigger>
       <Modal.Backdrop>
         <Modal.Container>
@@ -45,41 +34,30 @@ const today = formatDateTime(new Date());
               <>
                 <Modal.CloseTrigger />
                 <Modal.Header>
-                  <Modal.Heading>Create Topic</Modal.Heading>
+                  <Modal.Heading>Edit Post</Modal.Heading>
                 </Modal.Header>
                 <Modal.Body>
                   <div className="flex flex-col gap-4">
                     <TextField isRequired value={topic} onChange={setTopic} fullWidth>
                       <Label>Topic</Label>
-                      <Input placeholder="What's this update about?" />
+                      <Input />
                     </TextField>
-
-                    <div className="flex gap-6 text-sm text-gray-400 border-y border-gray-700 py-2">
-                      <p>
-                        <span className="font-medium text-gray-200">Posted by:</span>{" "}
-                        {authorName}
-                      </p>
-                      <p>
-                        <span className="font-medium text-gray-200">Date:</span> {today}
-                      </p>
-                    </div>
-
                     <TextField isRequired value={details} onChange={setDetails} fullWidth>
                       <Label>Details</Label>
-                      <TextArea rows={5} placeholder="Add details..." />
+                      <TextArea rows={6} />
                     </TextField>
-
-                    {error && <p className="text-sm text-red-600">{error}</p>}
+                    {error && <p className="text-sm text-red-500">{error}</p>}
                   </div>
                 </Modal.Body>
                 <Modal.Footer>
                   <Button
-                  
                     variant="outline"
                     className="text-gray-300 hover:text-gray-50"
                     isDisabled={isPending}
                     onPress={() => {
-                      reset();
+                      setTopic(post.topic);
+                      setDetails(post.details);
+                      setError(null);
                       close();
                     }}
                   >
@@ -95,18 +73,20 @@ const today = formatDateTime(new Date());
                       }
                       setError(null);
                       startTransition(async () => {
-                        const result = await createPost({ departmentId, topic, details });
-                        if (result?.error) {
-                          setError(result.error);
-                        } else {
-                          reset();
+                        const result = await updatePost({
+                          postId: post.id,
+                          topic,
+                          details,
+                        });
+                        if (result?.error) setError(result.error);
+                        else {
                           close();
                           router.refresh();
                         }
                       });
                     }}
                   >
-                    Post
+                    Save Changes
                   </Button>
                 </Modal.Footer>
               </>
