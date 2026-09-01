@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { prisma } from "./lib/prisma";
 import { Card } from "@heroui/react";
+import { formatDateTime } from "./lib/formatDate"
 
 export default async function HomePage() {
   const departments = await prisma.department.findMany({
@@ -65,24 +66,24 @@ export default async function HomePage() {
         ) : (
           <div className="flex flex-col gap-3">
             {recentPosts.map((post) => (
-              <Link
-                key={post.id}
-                href={`/departments/${post.department.slug}/${post.id}`}
-                className="block p-4 rounded-lg bg-gray-50 border border-gray-200 hover:border-[#B31419] transition"
-              >
-                <div className="flex justify-between items-start gap-4">
-                  <div>
-                    <p className="font-medium">{post.topic}</p>
-                    <p className="text-sm text-gray-500 mt-1 line-clamp-2">{post.details}</p>
-                  </div>
-                  <span className="text-xs text-gray-400 whitespace-nowrap">
-                    {post.createdAt.toLocaleDateString()}
-                  </span>
-                </div>
-                <p className="text-xs text-gray-400 mt-2">
-                  {post.department.name} — {post.author.name}
-                </p>
-              </Link>
+             <Link
+  key={post.id}
+  href={`/departments/${post.department.slug}/${post.id}`}
+  className="block p-4 rounded-lg bg-[#1a1a1a] border border-gray-800 hover:border-[#B31419] transition"
+>
+  <div className="flex justify-between items-start gap-4">
+    <div>
+      <p className="font-medium text-gray-100">{post.topic}</p>
+      <p className="text-sm text-gray-400 mt-1 line-clamp-2">{post.details}</p>
+    </div>
+    <span className="text-xs text-gray-500 whitespace-nowrap">
+      {formatDateTime(post.createdAt)}
+    </span>
+  </div>
+  <p className="text-xs text-gray-500 mt-2">
+    {post.department.name} — {post.author.name}
+  </p>
+</Link>
             ))}
           </div>
         )}

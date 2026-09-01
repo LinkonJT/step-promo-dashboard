@@ -1,6 +1,9 @@
+import { auth } from "../../../auth";
 import { prisma } from "../../lib/prisma";
 import { notFound } from "next/navigation";
 import { ProductPhotoGrid } from "../../components/ProductPhotoGrid";
+import { CreateTopicModal } from "../../components/CreateTopicModal";
+import { PostPeekModal } from "../../components/PostPeekModal";
 import { Card } from "@heroui/react";
 import Link from "next/link";
 
@@ -25,9 +28,11 @@ export default async function DepartmentPage({ params }: PageProps) {
     notFound();
   }
 
+  const session = await auth();
+  const authorName = session?.user?.name ?? session?.user?.email ?? "Unknown";
+
   return (
     <div className="max-w-7xl w-full mx-auto px-4 sm:px-6 py-8">
-      {/* Department header */}
       <div className="border-l-4 border-[#B31419] pl-4 mb-6">
         <h1 className="text-2xl font-bold">{department.name}</h1>
         {department.description && (
@@ -35,7 +40,6 @@ export default async function DepartmentPage({ params }: PageProps) {
         )}
       </div>
 
-      {/* Dashboard link card */}
       {department.dashboardUrl && (
         <Link href={department.dashboardUrl} className="block mb-6">
           <Card className="hover:shadow-lg transition-shadow cursor-pointer">
@@ -48,18 +52,13 @@ export default async function DepartmentPage({ params }: PageProps) {
         </Link>
       )}
 
-      {/* Product photo grid — Tote-Bag only */}
       {department.name === "Tote-Bag Operations" && <ProductPhotoGrid />}
 
-      {/* Updates header */}
       <div className="flex items-center justify-between mt-8 mb-4">
         <h2 className="text-lg font-semibold">Updates</h2>
-        <button className="px-4 py-2 rounded-md bg-[#B31419] text-white hover:opacity-90">
-          + Create Topic
-        </button>
+        <CreateTopicModal departmentId={department.id} authorName={authorName} />
       </div>
 
-      {/* Posts list */}
       {department.posts.length === 0 ? (
         <Card>
           <Card.Header>
@@ -71,26 +70,7 @@ export default async function DepartmentPage({ params }: PageProps) {
       ) : (
         <div className="space-y-3">
           {department.posts.map((post) => (
-            <Link key={post.id} href={`/departments/${slug}/${post.id}`}>
-              <Card className="hover:shadow-lg transition-shadow cursor-pointer">
-                <Card.Header>
-                  <div className="flex justify-between items-start w-full">
-                    <Card.Title className="text-black text-base">
-                      {post.topic}
-                    </Card.Title>
-                    <span className="text-xs text-gray-400 whitespace-nowrap">
-                      {post.createdAt.toLocaleDateString()}
-                    </span>
-                  </div>
-                  <Card.Description className="text-gray-600 line-clamp-2">
-                    {post.details}
-                  </Card.Description>
-                  <p className="text-xs text-gray-400 mt-1">
-                    — {post.author.name}
-                  </p>
-                </Card.Header>
-              </Card>
-            </Link>
+            <PostPeekModal key={post.id} post={post} departmentSlug={slug} />
           ))}
         </div>
       )}
