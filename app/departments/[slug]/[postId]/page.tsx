@@ -50,9 +50,12 @@ export default async function PostDetailPage({ params }: PageProps) {
           <Card.Header>
             <div className="flex justify-between items-start w-full gap-4">
               <Card.Title className="text-gray-100 text-xl">{post.topic}</Card.Title>
-              <span className="text-xs text-gray-500 whitespace-nowrap">
-                {formatDateTime(post.createdAt)}
-              </span>
+             <span className="text-xs text-gray-500 whitespace-nowrap">
+  {formatDateTime(post.createdAt)}
+  {post.updatedAt.getTime() !== post.createdAt.getTime() && (
+    <span className="text-gray-600"> (edited)</span>
+  )}
+</span>
             </div>
             <p className="text-sm text-gray-400 mt-1">— {post.author.name}</p>
             <Card.Description className="text-gray-300 mt-4 whitespace-pre-wrap">

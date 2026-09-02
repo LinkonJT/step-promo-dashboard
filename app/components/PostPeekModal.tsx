@@ -10,6 +10,7 @@ interface PostPeekModalProps {
     topic: string;
     details: string;
     createdAt: Date;
+    updatedAt: Date;
     author: { name: string };
   };
   departmentSlug: string;
@@ -24,11 +25,14 @@ export function PostPeekModal({ post, departmentSlug }: PostPeekModalProps) {
         <Card className="bg-[#1a1a1a] border border-gray-800 hover:border-[#B31419] transition cursor-pointer text-left w-full">
           <Card.Header>
             <div className="flex justify-between items-start w-full gap-4 pr-12">
-              <Card.Title className="text-gray-100 text-base">{post.topic}</Card.Title>
-              <span className="text-xs text-gray-500 whitespace-nowrap">
-                {formatDateTime(post.createdAt)}
-              </span>
-            </div>
+  <Card.Title className="text-gray-100 text-base">{post.topic}</Card.Title>
+  <span className="text-xs text-gray-500 whitespace-nowrap">
+    {formatDateTime(post.createdAt)}
+    {post.updatedAt.getTime() !== post.createdAt.getTime() && (
+      <span className="text-gray-600"> (edited)</span>
+    )}
+  </span>
+</div>
             <Card.Description className="text-gray-400 line-clamp-2">
               {post.details}
             </Card.Description>
@@ -46,11 +50,14 @@ export function PostPeekModal({ post, departmentSlug }: PostPeekModalProps) {
                   <Modal.Heading>{post.topic}</Modal.Heading>
                 </Modal.Header>
                 <Modal.Body>
-                  <p className="text-sm text-gray-400 mb-3">
-                    Posted by {post.author.name} on {formatDateTime(post.createdAt)}
-                  </p>
-                  <p className="text-gray-200 whitespace-pre-wrap">{post.details}</p>
-                </Modal.Body>
+  <p className="text-sm text-gray-400 mb-3">
+    Posted by {post.author.name} on {formatDateTime(post.createdAt)}
+    {post.updatedAt.getTime() !== post.createdAt.getTime() && (
+      <span className="text-gray-500"> (edited)</span>
+    )}
+  </p>
+  <p className="text-gray-200 whitespace-pre-wrap">{post.details}</p>
+</Modal.Body>
                 <Modal.Footer>
                   <Button
                     variant="outline"
