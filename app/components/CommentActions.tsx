@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Modal, Button, TextField, Label, TextArea } from "@heroui/react";
+import { Modal, Button, TextField, Label, TextArea, Spinner } from "@heroui/react";
 import { updateComment, softDeleteComment } from "../actions/comments";
 
 export function CommentActions({
@@ -82,7 +82,13 @@ export function CommentActions({
                         });
                       }}
                     >
-                      Save
+                       {({ isPending }) =>
+    isPending ? (
+      <Spinner size="sm" color="current" className="animate-[spin_1.5s_linear_infinite] motion-reduce:animate-none" />
+    ) : (
+      "Save Changes"
+    )
+  }
                     </Button>
                   </Modal.Footer>
                 </>
@@ -100,7 +106,13 @@ export function CommentActions({
             size="sm"
             className="text-xs text-gray-500 hover:text-red-400 bg-[#1a1a1a] hover:bg-[#1a1a1a] px-2"
           >
-            Delete
+             {({ isPending }) =>
+    isPending ? (
+      <Spinner size="sm" color="current" className="animate-[spin_1.5s_linear_infinite] motion-reduce:animate-none" />
+    ) : (
+      "Delete"
+    )
+  }
           </Button>
         </Modal.Trigger>
         <Modal.Backdrop>
@@ -143,7 +155,13 @@ export function CommentActions({
                         });
                       }}
                     >
-                      Delete
+                      {({ isPending }) =>
+    isPending ? (
+      <Spinner size="sm" color="current" className="animate-[spin_1.5s_linear_infinite] motion-reduce:animate-none" />
+    ) : (
+      "Delete"
+    )
+  }
                     </Button>
                   </Modal.Footer>
                 </>

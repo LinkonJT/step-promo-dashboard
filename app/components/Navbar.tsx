@@ -46,27 +46,17 @@ export function Navbar({ authButton }: { authButton: React.ReactNode }) {
       </div>
 
       {/* Mobile dropdown */}
-      {open && (
-        <div className="md:hidden flex flex-col gap-3 mt-4 pt-4 border-t border-gray-200">
-          <Link href="/" onClick={() => setOpen(false)} className="text-gray-600">
-            Home
-          </Link>
-          <span className="text-gray-400">Calculators</span>
-          <Link href="/who-we-are" onClick={() => setOpen(false)} className="text-gray-600">
-            Who We Are
-          </Link>
-          {/* <Link
-            href="/login"
-            onClick={() => setOpen(false)}
-            className="px-4 py-1.5 rounded-md bg-black text-white text-sm text-center"
-          >
-            Login
-          </Link> */}
-          {/* <div onClick={() => setOpen(false)}>{authButton}</div> */}
-          {authButton}
-
-        </div>
-      )}
+     {open && (
+  <div className="md:hidden flex flex-col gap-3 mt-4 pt-4 border-t border-gray-200">
+    <Link href="/" onClick={() => setOpen(false)} className="text-gray-600">
+      Home
+    </Link>
+    <Link href="/who-we-are" onClick={() => setOpen(false)} className="text-gray-600">
+      Who We Are
+    </Link>
+    {authButton}
+  </div>
+)}
     </nav>
   );
 }

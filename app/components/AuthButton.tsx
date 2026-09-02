@@ -25,7 +25,7 @@ export async function AuthButton({ onNavigate }: { onNavigate?: () => void }) {
     <form
       action={async () => {
         "use server";
-        await signIn("google", { redirectTo: "/tote-bag" });
+        await signIn("google", { redirectTo: "/" });
       }}
     >
       <button

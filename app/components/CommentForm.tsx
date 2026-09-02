@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Button, TextField, Label, TextArea } from "@heroui/react";
+import { Button, TextField, Label, TextArea, Spinner } from "@heroui/react";
 import { createComment } from "../actions/comments";
 
 export function CommentForm({
@@ -42,7 +42,13 @@ export function CommentForm({
             });
           }}
         >
-          Post Comment
+          {({ isPending }) =>
+    isPending ? (
+      <Spinner size="sm" color="current" className="animate-[spin_1.5s_linear_infinite] motion-reduce:animate-none" />
+    ) : (
+      "Post Comment"
+    )
+  }
         </Button>
       </div>
     </div>

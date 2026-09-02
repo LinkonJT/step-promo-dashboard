@@ -1,6 +1,6 @@
 import { auth } from "../../../../auth";
 import { prisma } from "../../../lib/prisma";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { Card } from "@heroui/react";
 import Link from "next/link";
 import { CommentForm } from "../../../components/CommentForm";
@@ -14,6 +14,11 @@ interface PageProps {
 
 export default async function PostDetailPage({ params }: PageProps) {
   const { slug, postId } = await params;
+
+  const session = await auth();
+  if (!session) {
+    redirect("/?blocked=true");
+  }
 
   const post = await prisma.post.findUnique({
     where: { id: postId },
@@ -32,7 +37,6 @@ export default async function PostDetailPage({ params }: PageProps) {
     notFound();
   }
 
-  const session = await auth();
   const currentUserEmail = session?.user?.email ?? null;
   const isAuthor = currentUserEmail === post.author.email;
 

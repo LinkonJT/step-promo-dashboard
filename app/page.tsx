@@ -1,31 +1,29 @@
 import Image from "next/image";
-import Link from "next/link";
 import { prisma } from "./lib/prisma";
+import { auth } from "../auth";
 import { Card } from "@heroui/react";
-import { formatDateTime } from "./lib/formatDate"
+import { formatDateTime } from "./lib/formatDate";
+import { GatedLink } from "./components/GatedLink";
 
 export default async function HomePage() {
+  const session = await auth();
+  const isSignedIn = !!session;
+
   const departments = await prisma.department.findMany({
     orderBy: { order: "asc" },
   });
 
- const recentPosts = await prisma.post.findMany({
-  where: { deletedAt: null },
-  take: 10,
-  orderBy: { createdAt: "desc" },
-  include: { author: true, department: true },
-});
+  const recentPosts = await prisma.post.findMany({
+    where: { deletedAt: null },
+    take: 10,
+    orderBy: { createdAt: "desc" },
+    include: { author: true, department: true },
+  });
 
   return (
-    <main className="flex flex-col md:px-2 sm:px-4 py-10 gap-12 w-full max-w-7xl mx-auto">
-      {/* Heading */}
-      <div className="text-center">
-        <h1 className="text-2xl font-bold text-[#B31419]">Welcome To</h1>
-        <h2 className="text-3xl font-bold">Step Group Portal</h2>
-      </div>
-
-      {/* Banner */}
-      <div className="relative w-full aspect-21/9 rounded-lg overflow-hidden border border-gray-200">
+    <main className="flex flex-col w-full">
+      {/* Full-bleed hero banner — edge to edge, no gap below navbar */}
+      <div className="relative w-full aspect-4/3 sm:aspect-16/9 md:aspect-21/9 overflow-hidden">
         <Image
           src="/banner.jpg"
           alt="Step Group"
@@ -33,66 +31,84 @@ export default async function HomePage() {
           priority
           className="object-cover"
         />
+        <div className="absolute inset-0 bg-black/55" />
+        <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
+          {/* <p className="text-sm sm:text-base font-semibold text-[#ff6b6b] tracking-wide uppercase mb-1">
+            Welcome To
+          </p> */}
+          <h1 className="text-3xl sm:text-5xl font-bold text-white drop-shadow-lg">
+             Group Portal
+          </h1>
+        </div>
       </div>
 
-    
-     {/* Department cards */}
-<div className="w-full">
-  <h2 className="text-lg font-semibold mb-4 text-[#db2127] mx-auto">Departments</h2>
-  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-5">
-    {departments.map((dept) => (
-      <Link key={dept.id} href={`/departments/${dept.slug}`}>
-        <Card className="hover:shadow-lg transition-shadow cursor-pointer  border-t-[#B31419] border-t-1  border-l-4 border-l-[#B31419] h-full">
-          <Card.Header>
-            <Card.Title className="text-grey-800 text-base">{dept.name}</Card.Title>
-            {dept.description && (
-              <Card.Description className="text-gray-600">
-                {dept.description}
-              </Card.Description>
-            )}
-          </Card.Header>
-        </Card>
-      </Link>
-    ))}
-  </div>
-</div>
-
-      {/* Recent updates — last 10 posts across all departments */}
-      <div className="w-full">
-        <h2 className="text-lg font-semibold mb-4 text-[#db2127] ">Recent Updates</h2>
-        {recentPosts.length === 0 ? (
-          <div className="text-center py-12 text-gray-400 border border-gray-200 rounded-lg">
-            No updates yet.
-          </div>
-        ) : (
-          <div className="flex flex-col gap-3">
-            {recentPosts.map((post) => (
-             <Link
-  key={post.id}
-  href={`/departments/${post.department.slug}/${post.id}`}
-  className="block p-4 rounded-lg bg-[#1a1a1a] border border-gray-800 hover:border-[#B31419] transition"
->
-  <div className="flex justify-between items-start gap-4">
-    <div>
-      <p className="font-medium text-gray-100">{post.topic}</p>
-      <p className="text-sm text-gray-400 mt-1 line-clamp-2">{post.details}</p>
-    </div>
-    <span className="text-xs text-gray-500 whitespace-nowrap">
-      {formatDateTime(post.createdAt)}
-    </span>
-  </div>
-  <p className="text-xs text-gray-500 mt-2">
-    {post.department.name} — {post.author.name}
-  </p>
-</Link>
+      {/* Contained content below the banner */}
+      <div className="flex flex-col gap-12 w-full max-w-7xl mx-auto px-4 sm:px-6 py-10">
+        {/* Department cards */}
+        <div className="w-full">
+          <h2 className="text-lg font-semibold mb-4 text-[#db2127] mx-auto">Departments</h2>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-5">
+            {departments.map((dept) => (
+              <GatedLink
+                key={dept.id}
+                href={`/departments/${dept.slug}`}
+                isSignedIn={isSignedIn}
+                message="Please sign in to view this department"
+              >
+                <Card className="hover:shadow-lg transition-shadow cursor-pointer border-t-[#B31419] border-t-1 border-l-4 border-l-[#B31419] h-full">
+                  <Card.Header>
+                    <Card.Title className="text-gray-50 text-base">{dept.name}</Card.Title>
+                    {dept.description && (
+                      <Card.Description className="text-gray-600">
+                        {dept.description}
+                      </Card.Description>
+                    )}
+                  </Card.Header>
+                </Card>
+              </GatedLink>
             ))}
           </div>
-        )}
-      </div>
+        </div>
 
-      <footer className="mt-4 text-sm text-gray-400 text-center">
-        Step Group of Industries — Step Promo
-      </footer>
+        {/* Recent updates — last 10 posts across all departments */}
+        <div className="w-full">
+          <h2 className="text-lg font-semibold mb-4 text-[#db2127]">Recent Updates</h2>
+          {recentPosts.length === 0 ? (
+            <div className="text-center py-12 text-gray-400 border border-gray-200 rounded-lg">
+              No updates yet.
+            </div>
+          ) : (
+            <div className="flex flex-col gap-3">
+              {recentPosts.map((post) => (
+                <GatedLink
+                  key={post.id}
+                  href={`/departments/${post.department.slug}/${post.id}`}
+                  isSignedIn={isSignedIn}
+                  message="Please sign in to read the full update"
+                  className="block p-4 rounded-lg bg-[#1a1a1a] border border-gray-800 hover:border-[#B31419] transition"
+                >
+                  <div className="flex justify-between items-start gap-4">
+                    <div>
+                      <p className="font-medium text-gray-100">{post.topic}</p>
+                      <p className="text-sm text-gray-400 mt-1 line-clamp-2">{post.details}</p>
+                    </div>
+                    <span className="text-xs text-gray-500 whitespace-nowrap">
+                      {formatDateTime(post.createdAt)}
+                    </span>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-2">
+                    {post.department.name} — {post.author.name}
+                  </p>
+                </GatedLink>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <footer className="mt-4 text-sm text-gray-400 text-center">
+          Step Group of Industries — Step Promo
+        </footer>
+      </div>
     </main>
   );
 }

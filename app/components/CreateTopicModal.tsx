@@ -2,9 +2,10 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Modal, Button, TextField, Label, Input, TextArea } from "@heroui/react";
+import { Modal, Button, TextField, Label, Input, TextArea, Spinner  } from "@heroui/react";
 import { createPost } from "../actions/posts";
 import { formatDateTime } from "../lib/formatDate";
+
 
 export function CreateTopicModal({
   departmentId,
@@ -106,7 +107,13 @@ const today = formatDateTime(new Date());
                       });
                     }}
                   >
-                    Post
+                     {({ isPending }) =>
+    isPending ? (
+      <Spinner size="sm" color="current" className="animate-[spin_1.5s_linear_infinite] motion-reduce:animate-none" />
+    ) : (
+      "Post"
+    )
+  }
                   </Button>
                 </Modal.Footer>
               </>

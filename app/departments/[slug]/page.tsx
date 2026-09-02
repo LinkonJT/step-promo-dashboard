@@ -1,6 +1,6 @@
 import { auth } from "../../../auth";
 import { prisma } from "../../lib/prisma";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { ProductPhotoGrid } from "../../components/ProductPhotoGrid";
 import { CreateTopicModal } from "../../components/CreateTopicModal";
 import { PostPeekModal } from "../../components/PostPeekModal";
@@ -14,6 +14,11 @@ interface PageProps {
 
 export default async function DepartmentPage({ params }: PageProps) {
   const { slug } = await params;
+
+  const session = await auth();
+  if (!session) {
+    redirect("/?blocked=true");
+  }
 
   const department = await prisma.department.findUnique({
     where: { slug },
@@ -30,7 +35,6 @@ export default async function DepartmentPage({ params }: PageProps) {
     notFound();
   }
 
-  const session = await auth();
   const authorName = session?.user?.name ?? session?.user?.email ?? "Unknown";
   const currentUserEmail = session?.user?.email ?? null;
 
@@ -73,7 +77,7 @@ export default async function DepartmentPage({ params }: PageProps) {
       ) : (
         <div className="space-y-3">
           {department.posts.map((post) => (
-            <div key={post.id} className="relative">
+            <div key={post.id} className="relative w-full">
               <PostPeekModal post={post} departmentSlug={slug} />
               {currentUserEmail === post.author.email && (
                 <div className="absolute top-3 right-3 z-10">

@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
 import { Navbar } from "./components/Navbar";
 import { AuthButton } from "./components/AuthButton";
 import { ScrollToTop } from "./components/ScrollToTop";
+import { AuthToastListener } from "./components/AuthToastListener";
+import { Toast } from "@heroui/react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,13 +30,17 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col" >
+      <body className="min-h-full flex flex-col">
         <Providers>
-           <ScrollToTop></ScrollToTop>
-          <Navbar  authButton={<AuthButton />}></Navbar>
+          <ScrollToTop />
+          <Navbar authButton={<AuthButton />} />
+          <Toast.Provider />
+          <Suspense fallback={null}>
+            <AuthToastListener />
+          </Suspense>
           {children}
-          </Providers>
-        </body>
+        </Providers>
+      </body>
     </html>
   );
 }
