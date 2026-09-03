@@ -22,6 +22,12 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Step Group Portal",
   description: "Live updates for Step Group operations",
+  manifest: "/manifest.webmanifest",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "Step Portal",
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
