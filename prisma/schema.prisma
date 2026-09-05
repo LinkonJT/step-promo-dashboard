@@ -12,6 +12,16 @@ datasource db {
   provider = "postgresql"
 }
 
+enum Role {
+  USER
+  ADMIN
+}
+
+enum NotificationType {
+  NEW_POST
+  NEW_COMMENT
+}
+
 model User {
   id        String    @id @default(cuid())
   email     String    @unique
@@ -21,6 +31,11 @@ model User {
 
   posts     Post[]
   comments  Comment[]
+
+  role      Role      @default(USER)
+  notifications Notification[] @relation("NotificationRecipient")
+  actedNotifications Notification[] @relation("NotificationActor")
+  
 }
 
 model Department {
@@ -47,6 +62,7 @@ model Post {
   departmentId String
   comments     Comment[]
   @@index([departmentId, createdAt])
+  notifications Notification[]
 }
 
 model Comment {
@@ -63,5 +79,31 @@ model Comment {
   postId    String
 
   @@index([postId, createdAt])
+  notifications Notification[]
 }
 
+model Notification {
+  id        String           @id @default(cuid())
+  type      NotificationType
+
+  // Who receives this notification
+  recipientId String
+  recipient   User   @relation("NotificationRecipient", fields: [recipientId], references: [id], onDelete: Cascade)
+
+  // Who caused it (the poster or commenter)
+  actorId String
+  actor   User   @relation("NotificationActor", fields: [actorId], references: [id], onDelete: Cascade)
+
+  // What it points at — always a post; commentId set only for NEW_COMMENT
+  postId String
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  commentId String?
+  comment   Comment? @relation(fields: [commentId], references: [id], onDelete: Cascade)
+
+  readAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([recipientId, readAt])
+  @@index([recipientId, createdAt])
+}

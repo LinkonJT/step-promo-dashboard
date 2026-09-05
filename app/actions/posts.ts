@@ -2,6 +2,7 @@
 
 import { auth } from "../../auth";
 import { prisma } from "../lib/prisma";
+import { getAdminUserIds } from "../lib/notifications";
 import { revalidatePath } from "next/cache";
 
 export async function createPost({
@@ -36,15 +37,30 @@ export async function createPost({
     if (!department) {
       return { error: "Department not found." };
     }
-
-    await prisma.post.create({
+  const post = await prisma.post.create({
       data: {
         topic: topic.trim(),
         details: details.trim(),
         authorId: author.id,
         departmentId,
       },
+      select: { id: true },
     });
+
+    // Notify admins (MD + Linkon), excluding whoever wrote the post.
+    const adminIds = await getAdminUserIds();
+    const recipientIds = adminIds.filter((id) => id !== author.id);
+
+    if (recipientIds.length > 0) {
+      await prisma.notification.createMany({
+        data: recipientIds.map((recipientId) => ({
+          type: "NEW_POST" as const,
+          recipientId,
+          actorId: author.id,
+          postId: post.id,
+        })),
+      });
+    }
 
     revalidatePath(`/departments/${department.slug}`);
     revalidatePath("/");

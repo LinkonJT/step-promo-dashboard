@@ -2,12 +2,14 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { auth } from "@/auth";
 import { Providers } from "./providers";
 import { Navbar } from "./components/Navbar";
 import { AuthButton } from "./components/AuthButton";
 import { ScrollToTop } from "./components/ScrollToTop";
 import { AuthToastListener } from "./components/AuthToastListener";
 import { Toast } from "@heroui/react";
+import { getUnreadCount } from "./actions/notifications";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,7 +32,13 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  const session = await auth();
+  const isSignedIn = !!session?.user;
+
+  // Only query when signed in — skips a DB round-trip for anonymous visitors.
+  const unreadCount = isSignedIn ? await getUnreadCount() : 0;
+
   return (
     <html
       lang="en"
@@ -39,7 +47,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-full flex flex-col">
         <Providers>
           <ScrollToTop />
-          <Navbar authButton={<AuthButton />} />
+          <Navbar
+            authButton={<AuthButton />}
+            isSignedIn={isSignedIn}
+            unreadCount={unreadCount}
+          />
           <Toast.Provider />
           <Suspense fallback={null}>
             <AuthToastListener />

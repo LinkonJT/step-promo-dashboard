@@ -2,6 +2,7 @@
 
 import { auth } from "../../auth";
 import { prisma } from "../lib/prisma";
+import { getAdminUserIds } from "../lib/notifications";
 import { revalidatePath } from "next/cache";
 
 export async function createComment({
@@ -21,15 +22,57 @@ export async function createComment({
     return { error: "Comment cannot be empty." };
   }
 
-  try {
+    try {
     const author = await prisma.user.findUniqueOrThrow({
       where: { email: session.user.email },
       select: { id: true },
     });
 
-    await prisma.comment.create({
+    const comment = await prisma.comment.create({
       data: { text: text.trim(), authorId: author.id, postId },
+      select: { id: true },
     });
+
+    // --- Build the recipient set ---
+    // Rule: MD + Linkon (admins) + post author + everyone who has
+    // previously commented on this post, minus the current commenter.
+
+    const post = await prisma.post.findUnique({
+      where: { id: postId },
+      select: { authorId: true },
+    });
+
+    const priorCommenters = await prisma.comment.findMany({
+      where: {
+        postId,
+        deletedAt: null,
+        id: { not: comment.id }, // exclude the comment just created
+      },
+      select: { authorId: true },
+      distinct: ["authorId"],
+    });
+
+    const adminIds = await getAdminUserIds();
+
+    const recipientIds = [
+      ...new Set([
+        ...adminIds,
+        ...(post ? [post.authorId] : []),
+        ...priorCommenters.map((c) => c.authorId),
+      ]),
+    ].filter((id) => id !== author.id); // never notify the commenter
+
+    if (recipientIds.length > 0) {
+      await prisma.notification.createMany({
+        data: recipientIds.map((recipientId) => ({
+          type: "NEW_COMMENT" as const,
+          recipientId,
+          actorId: author.id,
+          postId,
+          commentId: comment.id,
+        })),
+      });
+    }
 
     revalidatePath(`/departments/${departmentSlug}/${postId}`);
     return { success: true };
@@ -38,6 +81,8 @@ export async function createComment({
     return { error: "Something went wrong. Please try again." };
   }
 }
+
+// UpdateComment
 
 export async function updateComment({
   commentId,
@@ -83,6 +128,8 @@ export async function updateComment({
   }
 }
 
+
+// SoftDeleteComment
 export async function softDeleteComment({
   commentId,
   departmentSlug,
