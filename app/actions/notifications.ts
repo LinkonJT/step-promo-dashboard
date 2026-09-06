@@ -9,8 +9,10 @@ async function getCurrentUserId(): Promise<string | null> {
   const session = await auth();
   if (!session?.user?.email) return null;
 
+  const email = session.user.email.toLowerCase().trim();
+
   const user = await prisma.user.findUnique({
-    where: { email: session.user.email },
+    where: { email },
     select: { id: true },
   });
 
@@ -79,7 +81,7 @@ export async function markAllAsRead() {
       data: { readAt: new Date() },
     });
 
-    revalidatePath("/");
+    revalidatePath("/", "layout");
     return { success: true };
   } catch (err) {
     console.error("Failed to mark notifications as read:", err);

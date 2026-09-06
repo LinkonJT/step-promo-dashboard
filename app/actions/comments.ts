@@ -22,9 +22,11 @@ export async function createComment({
     return { error: "Comment cannot be empty." };
   }
 
-    try {
+  const email = session.user.email.toLowerCase().trim();
+
+  try {
     const author = await prisma.user.findUniqueOrThrow({
-      where: { email: session.user.email },
+      where: { email },
       select: { id: true },
     });
 
@@ -75,6 +77,8 @@ export async function createComment({
     }
 
     revalidatePath(`/departments/${departmentSlug}/${postId}`);
+    revalidatePath("/", "layout"); // badge count lives in the root layout
+
     return { success: true };
   } catch (err) {
     console.error("Failed to create comment:", err);
@@ -82,8 +86,7 @@ export async function createComment({
   }
 }
 
-// UpdateComment
-
+// updateComment
 export async function updateComment({
   commentId,
   departmentSlug,
@@ -101,6 +104,8 @@ export async function updateComment({
     return { error: "Comment cannot be empty." };
   }
 
+  const email = session.user.email.toLowerCase().trim();
+
   try {
     const comment = await prisma.comment.findUnique({
       where: { id: commentId },
@@ -111,7 +116,7 @@ export async function updateComment({
       return { error: "Comment not found." };
     }
 
-    if (comment.author.email !== session.user.email) {
+    if (comment.author.email.toLowerCase() !== email) {
       return { error: "You can only edit your own comments." };
     }
 
@@ -128,8 +133,7 @@ export async function updateComment({
   }
 }
 
-
-// SoftDeleteComment
+// softDeleteComment
 export async function softDeleteComment({
   commentId,
   departmentSlug,
@@ -142,6 +146,8 @@ export async function softDeleteComment({
     return { error: "Not authenticated." };
   }
 
+  const email = session.user.email.toLowerCase().trim();
+
   try {
     const comment = await prisma.comment.findUnique({
       where: { id: commentId },
@@ -152,7 +158,7 @@ export async function softDeleteComment({
       return { error: "Comment not found." };
     }
 
-    if (comment.author.email !== session.user.email) {
+    if (comment.author.email.toLowerCase() !== email) {
       return { error: "You can only delete your own comments." };
     }
 

@@ -19,13 +19,16 @@ export async function createPost({
     return { error: "Not authenticated." };
   }
 
+  // auth.ts stores emails lowercase — normalise here so lookups always match
+  const email = session.user.email.toLowerCase().trim();
+
   if (!topic.trim() || !details.trim()) {
     return { error: "Topic and details are required." };
   }
 
   try {
     const author = await prisma.user.findUniqueOrThrow({
-      where: { email: session.user.email },
+      where: { email },
       select: { id: true },
     });
 
@@ -37,7 +40,8 @@ export async function createPost({
     if (!department) {
       return { error: "Department not found." };
     }
-  const post = await prisma.post.create({
+
+    const post = await prisma.post.create({
       data: {
         topic: topic.trim(),
         details: details.trim(),
@@ -63,7 +67,7 @@ export async function createPost({
     }
 
     revalidatePath(`/departments/${department.slug}`);
-    revalidatePath("/");
+    revalidatePath("/", "layout"); // badge count lives in the root layout
 
     return { success: true };
   } catch (err) {
@@ -72,6 +76,7 @@ export async function createPost({
   }
 }
 
+// updatePost
 export async function updatePost({
   postId,
   topic,
@@ -85,6 +90,8 @@ export async function updatePost({
   if (!session?.user?.email) {
     return { error: "Not authenticated." };
   }
+
+  const email = session.user.email.toLowerCase().trim();
 
   if (!topic.trim() || !details.trim()) {
     return { error: "Topic and details are required." };
@@ -103,7 +110,7 @@ export async function updatePost({
       return { error: "Post not found." };
     }
 
-    if (post.author.email !== session.user.email) {
+    if (post.author.email.toLowerCase() !== email) {
       return { error: "You can only edit your own posts." };
     }
 
@@ -126,11 +133,14 @@ export async function updatePost({
   }
 }
 
+// softDeletePost
 export async function softDeletePost({ postId }: { postId: string }) {
   const session = await auth();
   if (!session?.user?.email) {
     return { error: "Not authenticated." };
   }
+
+  const email = session.user.email.toLowerCase().trim();
 
   try {
     const post = await prisma.post.findUnique({
@@ -145,7 +155,7 @@ export async function softDeletePost({ postId }: { postId: string }) {
       return { error: "Post not found." };
     }
 
-    if (post.author.email !== session.user.email) {
+    if (post.author.email.toLowerCase() !== email) {
       return { error: "You can only delete your own posts." };
     }
 
