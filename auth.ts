@@ -16,25 +16,33 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   callbacks: {
     async signIn({ user }) {
       if (!user.email) return false;
-      if (!allowedEmails.includes(user.email)) return false;
+
+      // Google can return mixed case; normalise before comparing
+      const email = user.email.toLowerCase().trim();
+
+      if (!allowedEmails.map((e) => e.toLowerCase()).includes(email)) {
+        console.warn("[auth] Sign-in rejected — not on allowlist:", email);
+        return false;
+      }
 
       try {
         await prisma.user.upsert({
-          where: { email: user.email },
+          where: { email },
           update: {
             name: user.name ?? undefined,
             image: user.image ?? undefined,
-            // role deliberately omitted — manual changes in Prisma Studio persist
           },
           create: {
-            email: user.email,
-            name: user.name ?? user.email,
+            email,
+            name: user.name ?? email,
             image: user.image ?? null,
-            role: ADMIN_EMAILS.includes(user.email) ? "ADMIN" : "USER",
+            role: ADMIN_EMAILS.map((e) => e.toLowerCase()).includes(email)
+              ? "ADMIN"
+              : "USER",
           },
         });
       } catch (err) {
-        console.error("User upsert failed during sign-in:", err);
+        console.error("[auth] User upsert failed:", email, err);
         return false;
       }
 
