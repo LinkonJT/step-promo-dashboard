@@ -6,10 +6,11 @@ const allowedEmails = [
   "linkon.step@gmail.com",
   "linkontripura@gmail.com",
   "skabir@agni.com",
+  "shamim.stepbd@gmail.com"
 ];
 
 // Admin-tier users — always notified on new posts and comments.
-const ADMIN_EMAILS = ["linkon.step@gmail.com", "skabir@agni.com"];
+const ADMIN_EMAILS = ["linkon.step@gmail.com", "skabir@agni.com", "shamim.stepbd@gmail.com"];
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   providers: [Google],
