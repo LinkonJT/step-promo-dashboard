@@ -51,6 +51,8 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
             authButton={<AuthButton />}
             isSignedIn={isSignedIn}
             unreadCount={unreadCount}
+            userEmail={session?.user?.email ?? null}
+            userName={session?.user?.name ?? null}
           />
           <Toast.Provider />
           <Suspense fallback={null}>
