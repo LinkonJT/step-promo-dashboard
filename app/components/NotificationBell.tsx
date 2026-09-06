@@ -2,7 +2,11 @@
 
 import { useState, useRef, useEffect, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { getNotifications, markAllAsRead } from "../actions/notifications";
+import {
+  getNotifications,
+  markAllAsRead,
+  getUnreadCount,
+} from "../actions/notifications";
 
 type NotificationItem = {
   id: string;
@@ -14,6 +18,8 @@ type NotificationItem = {
   href: string;
 };
 
+const POLL_INTERVAL_MS = 60_000;
+
 export default function NotificationBell({
   initialUnreadCount,
 }: {
@@ -24,20 +30,54 @@ export default function NotificationBell({
   const [loading, setLoading] = useState(false);
   const [, startTransition] = useTransition();
 
-  // Badge state: the server's count is the source of truth. Opening the
-  // dropdown dismisses it locally; a new count from the server undoes that.
+  // Badge count: starts from the server-rendered value, then kept fresh by
+  // polling. `dismissed` clears it locally the instant the dropdown opens.
+  const [polledCount, setPolledCount] = useState(initialUnreadCount);
   const [dismissed, setDismissed] = useState(false);
-  const [prevCount, setPrevCount] = useState(initialUnreadCount);
+  const [prevInitial, setPrevInitial] = useState(initialUnreadCount);
 
-  if (prevCount !== initialUnreadCount) {
-    setPrevCount(initialUnreadCount);
+  // A full navigation gives us a fresh server count — adopt it and drop
+  // any stale "dismissed" state from before that navigation happened.
+  if (prevInitial !== initialUnreadCount) {
+    setPrevInitial(initialUnreadCount);
+    setPolledCount(initialUnreadCount);
     setDismissed(false);
   }
 
-  const unreadCount = dismissed ? 0 : initialUnreadCount;
+  const unreadCount = dismissed ? 0 : polledCount;
 
   const ref = useRef<HTMLDivElement>(null);
   const router = useRouter();
+
+  // Keep the badge current while the tab sits open and idle — this is the
+  // gap a server-rendered count alone can't close.
+  useEffect(() => {
+    async function poll() {
+      try {
+        const count = await getUnreadCount();
+        setPolledCount(count);
+        // Only new activity should un-dismiss the badge; if nothing new
+        // arrived, respect whatever the user already cleared.
+        setDismissed((wasDismissed) => (count > 0 ? false : wasDismissed));
+      } catch (err) {
+        console.error("Failed to poll notification count:", err);
+      }
+    }
+
+    const interval = setInterval(poll, POLL_INTERVAL_MS);
+
+    // Also check the moment the tab regains focus, so switching away and
+    // back doesn't mean waiting up to 60 seconds for an update.
+    function handleVisibility() {
+      if (document.visibilityState === "visible") poll();
+    }
+    document.addEventListener("visibilitychange", handleVisibility);
+
+    return () => {
+      clearInterval(interval);
+      document.removeEventListener("visibilitychange", handleVisibility);
+    };
+  }, []);
 
   useEffect(() => {
     function handleOutsideClick(e: MouseEvent) {
@@ -54,7 +94,6 @@ export default function NotificationBell({
     setOpen(next);
     if (!next) return;
 
-    // Fetch fresh on every open — cheap, and always accurate.
     setLoading(true);
     try {
       const data = await getNotifications();
