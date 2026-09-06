@@ -23,24 +23,21 @@ export default async function HomePage() {
   return (
     <main className="flex flex-col w-full">
       {/* Full-bleed hero banner — edge to edge, no gap below navbar */}
-      <div className="relative w-full aspect-4/3 sm:aspect-16/9 md:aspect-21/9 overflow-hidden">
-        <Image
-          src="/banner.jpg"
-          alt="Step Group"
-          fill
-          priority
-          className="object-cover"
-        />
-        <div className="absolute inset-0 bg-black/55" />
-        <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
-          {/* <p className="text-sm sm:text-base font-semibold text-[#ff6b6b] tracking-wide uppercase mb-1">
-            Welcome To
-          </p> */}
-          <h1 className="text-3xl sm:text-5xl font-bold text-white drop-shadow-lg">
-             Group Portal
-          </h1>
-        </div>
-      </div>
+     <div className="relative w-full aspect-16/9 md:aspect-3/1 overflow-hidden">
+  <Image
+    src="/banner.jpeg"
+    alt="Step Group"
+    fill
+    priority
+    className="object-cover object-center"
+  />
+  <div className="absolute inset-0 bg-black/37" />
+  <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-4">
+    <h1 className="mt-[25%] sm:mt-[19%] sm:mr-[5%] lg:mr-[5%] text-3xl sm:text-5xl lg:text-6xl font-bold text-gray-200 drop-shadow-lg">
+      Group Portal
+    </h1>
+  </div>
+</div>
 
       {/* Contained content below the banner */}
       <div className="flex flex-col gap-12 w-full max-w-7xl mx-auto px-4 sm:px-6 py-10">
