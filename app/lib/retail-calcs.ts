@@ -12,6 +12,14 @@ export type MonthlyPoint = {
   lossOutlets: number;
 };
 
+export type RegionMonthPoint = {
+  month: string;
+  dhaka: number;
+  outside: number;
+  dhakaMargin: number;
+  outsideMargin: number;
+};
+
 export type OutletPoint = {
   outlet: string;
   regionGroup: string;
@@ -99,6 +107,33 @@ export function outletSeries(rows: RetailRow[]): OutletPoint[] {
       // its expenses exceed 40% of sales. This ratio is the tell.
       expenseRatio: actual ? expenses / actual : 0,
       lossMonths: or.filter((r) => r.netProfit < 0).length,
+    };
+  });
+}
+
+// Dhaka vs Outside Dhaka, one point per month. Always computed from the
+// FULL row set — these charts ignore the region filter by design.
+export function regionMonthlySeries(
+  allRows: RetailRow[],
+  months: string[],
+): RegionMonthPoint[] {
+  return months.map((m) => {
+    const dhakaRows = allRows.filter(
+      (r) => r.month === m && r.regionGroup === "Dhaka",
+    );
+    const outsideRows = allRows.filter(
+      (r) => r.month === m && r.regionGroup === "Outside Dhaka",
+    );
+    const dhakaActual = sum(dhakaRows, "actualSale");
+    const outsideActual = sum(outsideRows, "actualSale");
+    const dhakaNet = sum(dhakaRows, "netProfit");
+    const outsideNet = sum(outsideRows, "netProfit");
+    return {
+      month: m,
+      dhaka: dhakaActual,
+      outside: outsideActual,
+      dhakaMargin: dhakaActual ? dhakaNet / dhakaActual : 0,
+      outsideMargin: outsideActual ? outsideNet / outsideActual : 0,
     };
   });
 }

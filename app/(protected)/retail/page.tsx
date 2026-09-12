@@ -8,12 +8,18 @@ import {
   filterByGroup,
   monthlySeries,
   outletSeries,
+  regionMonthlySeries,
 } from "../../lib/retail-calcs";
 import {
   MonthlyChart,
   MarginTrendChart,
   OutletProfitChart,
   OutletAchievementChart,
+  RegionSalesChart,
+  RegionMarginChart,
+  OutletMarginChart,
+  ExpenseRatioChart,
+  LossMonthsChart,
 } from "../../components/RetailCharts";
 
 async function fetchRetail(): Promise<RetailData> {
@@ -50,24 +56,38 @@ export default function RetailPage() {
   if (isError) {
     return (
       <main className="px-6 py-10 max-w-6xl mx-auto">
-        <p className="text-red-400">Couldn&apos;t load retail data: {error.message}</p>
+        <p className="text-red-400">
+          Couldn&apos;t load retail data: {error.message}
+        </p>
       </main>
     );
   }
 
-  // (A) Everything recomputes for the selected region group.
+  // Filtered set — drives KPIs and every outlet-level chart.
   const rows = filterByGroup(data.rows, group);
   const kpis = computeKpis(rows);
   const monthly = monthlySeries(rows, data.months);
   const outlets = outletSeries(rows);
+
+  // Unfiltered set — the two region-comparison charts always show both
+  // regions, otherwise picking one would collapse the comparison.
+  const regionMonthly = regionMonthlySeries(data.rows, data.months);
 
   const latestMonth = data.months[data.months.length - 1];
 
   const stats = [
     { label: "Actual Sales", value: `৳${kpis.actual.toLocaleString()}`, sub: "YTD" },
     { label: "Net Profit", value: `৳${kpis.netProfit.toLocaleString()}`, sub: "YTD" },
-    { label: "Achievement", value: `${(kpis.achievementPct * 100).toFixed(1)}%`, sub: "actual / target" },
-    { label: "Net Margin", value: `${(kpis.marginPct * 100).toFixed(1)}%`, sub: "profit / sales" },
+    {
+      label: "Achievement",
+      value: `${(kpis.achievementPct * 100).toFixed(1)}%`,
+      sub: "actual / target",
+    },
+    {
+      label: "Net Margin",
+      value: `${(kpis.marginPct * 100).toFixed(1)}%`,
+      sub: "profit / sales",
+    },
   ];
 
   return (
@@ -81,20 +101,26 @@ export default function RetailPage() {
       </div>
 
       {/* Region filter */}
-      <div className="flex flex-wrap gap-2">
-        {GROUPS.map((g) => (
-          <button
-            key={g}
-            onClick={() => setGroup(g)}
-            className={`px-4 py-1.5 rounded-md text-sm border transition ${
-              group === g
-                ? "bg-teal-600 border-teal-600 text-white"
-                : "border-gray-500 text-gray-300 hover:bg-white/5"
-            }`}
-          >
-            {g}
-          </button>
-        ))}
+      <div>
+        <div className="flex flex-wrap gap-2">
+          {GROUPS.map((g) => (
+            <button
+              key={g}
+              onClick={() => setGroup(g)}
+              className={`px-4 py-1.5 rounded-md text-sm border transition ${
+                group === g
+                  ? "bg-teal-600 border-teal-600 text-white"
+                  : "border-gray-500 text-gray-300 hover:bg-white/5"
+              }`}
+            >
+              {g}
+            </button>
+          ))}
+        </div>
+        <p className="mt-2 text-xs text-gray-500">
+          Filters the headline numbers and all outlet charts. The two
+          Dhaka-vs-Outside comparison charts always show both.
+        </p>
       </div>
 
       {/* KPI cards */}
@@ -111,7 +137,13 @@ export default function RetailPage() {
         ))}
       </div>
 
-      {/* Monthly chart with BDT / % toggle */}
+      {/* 1. Big picture — region comparison */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <RegionSalesChart data={regionMonthly} />
+        <RegionMarginChart data={regionMonthly} />
+      </div>
+
+      {/* 2. Monthly performance */}
       <div className="flex justify-end gap-2">
         <button
           onClick={() => setChartMode("bdt")}
@@ -138,8 +170,19 @@ export default function RetailPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <MonthlyChart data={monthly} mode={chartMode} />
         <MarginTrendChart data={monthly} />
+      </div>
+
+      {/* 3. Outlet rankings */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <OutletProfitChart data={outlets} />
+        <OutletMarginChart data={outlets} />
         <OutletAchievementChart data={outlets} />
+      </div>
+
+      {/* 4. Risk */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <ExpenseRatioChart data={outlets} />
+        <LossMonthsChart data={outlets} />
       </div>
 
       <p className="text-xs text-gray-500 text-center">
